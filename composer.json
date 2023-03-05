@@ -1,0 +1,50 @@
+{
+    "name": "hosannahighertech/yii2-sms",
+    "description": "Yii2 component for sending SMS messages",
+    "keywords": [
+        "yii2",
+        "sms",
+        "beem"
+    ],
+    "type": "yii2-component",
+    "license": "MIT",
+    "support": {
+        "email": "support@hosannahighertech.co.tz",
+        "issues": "https://github.com/hosannahighertech/yii2-sms/issues",
+        "source": "https://github.com/hosannahighertech/yii2-sms"
+    },
+    "authors": [
+        {
+            "name": "Hosanna Higher Technologies",
+            "email": "support@hosannahighertech.co.tz"
+        },
+        {
+            "name": "Stefano Mtangoo",
+            "email": "mwinjilisti@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.4.0",
+        "yiisoft/yii2": "~2.0.45"
+    },
+    "autoload": {
+        "psr-4": {
+            "hosannahighertech\\sms\\": "src"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        },
+        "process-timeout": 1800,
+        "fxp-asset": {
+            "enabled": false
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ]
+}
