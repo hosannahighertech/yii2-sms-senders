@@ -8,9 +8,5 @@ class SmsMessage extends BaseObject
 {
     public string $sender;
     public array $receivers;
-    public string $message;
-
-    public function preProcess()
-    {
-    }
+    public string $content;
 }

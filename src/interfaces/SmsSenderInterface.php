@@ -12,14 +12,17 @@ abstract class SmsSenderInterface extends Component
 
     abstract protected function sendMessage(SmsMessage $message): bool;
 
-    function send(string $sender, array $receivers, string $message): bool
+    function send(string $sender, array $receivers, string $content, $preprocess = null): bool
     {
         $message = new SmsMessage([
             'sender' => $sender,
             'receivers' => $receivers,
-            'message' => $message,
+            'content' => $content,
         ]);
-        $message->preProcess();
+
+        if ($preprocess != null) {
+            $message = $preprocess($message);
+        }
 
         return $this->sendMessage($message);
     }

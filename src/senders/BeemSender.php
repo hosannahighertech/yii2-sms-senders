@@ -38,14 +38,13 @@ class BeemSender extends SmsSenderInterface
         ));
 
         $response = curl_exec($ch);
-        file_put_contents('./sms.log', $response);
+        $this->log(Logger::LEVEL_INFO, $response, self::LOGS_CATEGORY);
 
         if ($response === FALSE) {
             $this->logError(curl_error($ch), self::LOGS_CATEGORY);
             return false;
         } else {
-            $this->afterSend($message);
-            $this->log(Logger::LEVEL_INFO, $response, self::LOGS_CATEGORY);
+            //$this->afterSend($message);
             return true;
         }
     }
