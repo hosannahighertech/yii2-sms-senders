@@ -3,6 +3,7 @@
 namespace hosannahighertech\sms\senders;
 
 use hosannahighertech\sms\interfaces\SmsSenderInterface;
+use Yii;
 use yii\log\Logger;
 
 class BeemSender extends SmsSenderInterface
@@ -15,12 +16,21 @@ class BeemSender extends SmsSenderInterface
 
     public function sendMessage(SmsMessage $message): bool
     {
+        $receivers = [];
+        foreach ($message->receivers as $receiver) {
+            $receivers[] = [
+                'recipient_id' => floor(microtime(true) * 1000), //time in ms
+                'dest_addr' => $receiver,
+            ];
+        }
+        $message->receivers = $receivers;
+
         $postData = array(
             'source_addr' => $message->sender,
             'encoding' => 0,
             'schedule_time' => '',
             'message' => $message->content,
-            'recipients' => $message->numbers,
+            'recipients' => $message->receivers,
         );
 
 
@@ -38,12 +48,22 @@ class BeemSender extends SmsSenderInterface
         ));
 
         $response = curl_exec($ch);
-        $this->log(Logger::LEVEL_INFO, $response, self::LOGS_CATEGORY);
+        $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($this->enableLogging) {
+            Yii::error($message->toArray());
+        }
 
         if ($response === FALSE) {
             $this->logError(curl_error($ch), self::LOGS_CATEGORY);
             return false;
+        } else if ($httpStatus != 200) {
+            $this->logError("STATUS CODE {$httpStatus}", self::LOGS_CATEGORY);
+            $this->logError($response, self::LOGS_CATEGORY);
+            return false;
         } else {
+            $this->logDebug($response, self::LOGS_CATEGORY);
             //$this->afterSend($message);
             return true;
         }

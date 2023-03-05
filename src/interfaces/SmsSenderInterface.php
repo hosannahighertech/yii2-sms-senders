@@ -27,21 +27,21 @@ abstract class SmsSenderInterface extends Component
         return $this->sendMessage($message);
     }
 
-    public function logError(string $message, string $category = 'htcl.sms.error')
+    protected function logError(string $message, string $category = 'htcl.sms.error')
     {
         if ($this->enableLogging) {
             Yii::error($message, $category);
         }
     }
 
-    public function logDeb(string $message, string $category = 'htcl.sms.debug')
+    protected function logDebug(string $message, string $category = 'htcl.sms.debug')
     {
         if ($this->enableLogging) {
-            Yii::error($message, $category);
+            Yii::debug($message, $category);
         }
     }
 
-    public function logInfo(string $message, string $category = 'htcl.sms.info')
+    protected function logInfo(string $message, string $category = 'htcl.sms.info')
     {
         if ($this->enableLogging) {
             Yii::info($message, $category);
