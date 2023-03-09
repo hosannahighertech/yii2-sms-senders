@@ -18,6 +18,11 @@ class BeemSender extends SmsSenderInterface
     {
         $receivers = [];
         foreach ($message->receivers as $receiver) {
+            if (isset($receiver['recipient_id'])) { //when defined skip it
+                $receivers[] = $receiver;
+                continue;
+            }
+
             $receivers[] = [
                 'recipient_id' => floor(microtime(true) * 1000), //time in ms
                 'dest_addr' => $receiver,
