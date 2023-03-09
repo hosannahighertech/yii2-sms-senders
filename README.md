@@ -13,8 +13,25 @@ $sms = new \hosannahighertech\sms\senders\BeemSender([
  $sms->send('SENDER_NAME_OR_NUMBER', ['255....', '255....'], 'Hi, Test Message from Yii2 SMS');
 ```
 
-## TODO
-- Yii2 Events
+## Events
+This library support two events: `beforeSend` which gives you the SMS that will be sent as a payload and `afterSend` which gives you result from the backend. Here is an example on  adding event handlers to the above example
+
+```php
+$sms = new \hosannahighertech\sms\senders\BeemSender([
+  'key' => 'YOUR_KEY_FROM_BEEM
+      'secret' => 'YOUR_SECRET_HERE',
+  ]);
+  
+  $sender->on(SmsSenderInterface::EVENT_BEFORE_SEND, function (SMSEvent $event) {
+      $event->message; //this is SMS Object that was sent to the server. Handy to log things if you turned off loggin
+  });
+  
+  $sender->on(SmsSenderInterface::EVENT_AFTER_SEND, function (SMSEvent $event) {
+      $event->message; //this is data that comes from backend. For Beem, it is request_id
+  });
+
+ $sms->send('SENDER_NAME_OR_NUMBER', ['255....', '255....'], 'Hi, Test Message from Yii2 SMS');
+```
 
 ## Supported Gateways
 - BEEM Africa (see https://beem.africa/sms-api/ )
