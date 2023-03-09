@@ -69,7 +69,13 @@ class BeemSender extends SmsSenderInterface
             return false;
         } else {
             $this->logDebug($response, self::LOGS_CATEGORY);
-            //$this->afterSend($message);
+
+            $data = json_decode($response, true);
+            if ($data['code'] == 100) {
+                $this->afterSend($data['request_id']);
+            } else {
+                $this->afterSend('0');
+            }
             return true;
         }
     }

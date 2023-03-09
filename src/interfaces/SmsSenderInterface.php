@@ -2,6 +2,7 @@
 
 namespace hosannahighertech\sms\interfaces;
 
+use hosannahighertech\sms\events\SMSEvent;
 use hosannahighertech\sms\senders\SmsMessage;
 use Yii;
 use yii\base\Component;
@@ -10,11 +11,20 @@ abstract class SmsSenderInterface extends Component
 {
     public $enableLogging = true;
 
+    /**
+     * Sent SMS Delivery Statuses
+     */
     const STATUS_UNKNOWN = 0;
     const STATUS_NEW = 100;
     const STATUS_SENT = 101;
     const STATUS_DELIVERED = 102;
     const STATUS_FAILED = 103;
+
+    /**
+     * Events that are emitted
+     */
+    const EVENT_BEFORE_SEND = 'beforeSend';
+    const EVENT_AFTER_SEND = 'afterSend';
 
     /**
      * Send Message. Implement this in your SMS Gateway
@@ -55,7 +65,23 @@ abstract class SmsSenderInterface extends Component
             $message = $preprocess($message);
         }
 
+        $this->beforeSend($message);
+
         return $this->sendMessage($message);
+    }
+
+    protected function beforeSend(SmsMessage $message)
+    {
+        $event = new SMSEvent;
+        $event->message = $message;
+        $this->trigger(self::EVENT_BEFORE_SEND, $event);
+    }
+
+    protected function afterSend(string $reference)
+    {
+        $event = new SMSEvent;
+        $event->message = $reference;
+        $this->trigger(self::EVENT_AFTER_SEND, $event);
     }
 
     protected function logError(string $message, string $category = 'htcl.sms.error')
