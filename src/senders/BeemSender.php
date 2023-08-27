@@ -135,4 +135,47 @@ class BeemSender extends SmsSenderInterface
         }
         return self::STATUS_UNKNOWN;
     }
+
+    public function getBalance(): int
+    {
+        $URL = 'https://apisms.beem.africa/public/v1/vendors/balance';
+
+        // Setup cURL
+        $ch = curl_init();
+        error_reporting(E_ALL);
+        ini_set('display_errors', 1);
+
+        curl_setopt($ch, CURLOPT_URL, $URL);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        curl_setopt_array($ch, [
+            CURLOPT_HTTPGET => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_HTTPHEADER => array(
+                'Authorization:Basic ' . base64_encode("{$this->key}:{$this->secret}"),
+                'Content-Type: application/json',
+            ),
+        ]);
+
+        // Send the request
+        $response = curl_exec($ch);
+        $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($response === FALSE) {
+            $this->logError(curl_error($ch), self::LOGS_CATEGORY);
+        } else if ($httpStatus != 200) {
+            $this->logError("STATUS CODE {$httpStatus}", self::LOGS_CATEGORY);
+            $this->logError($response, self::LOGS_CATEGORY);
+        } else {
+            $this->logDebug($response, self::LOGS_CATEGORY);
+            $data = json_decode($response, true);
+            if (isset($data['data']['credit_balance'])) {
+                return intval($data['data']['credit_balance']);
+            } else {
+                $this->logError($data);
+            }
+        }
+        return 0;
+    }
 }

@@ -44,6 +44,13 @@ abstract class SmsSenderInterface extends Component
     abstract public function getDeliveryReport(string $mobile, string $requestId): int;
 
     /**
+     * Query message balance. Implement this in your SMS Gateway
+     * 
+     * @return int balance. The remaining SMS that can be consumed
+     */
+    abstract public function getBalance(): int;
+
+    /**
      * Send Message. The consumer of this library should call this method to do the sending
      * 
      * @param string $sender sender number or Special ID
